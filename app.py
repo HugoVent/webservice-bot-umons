@@ -4,11 +4,11 @@ from github import Github, GithubIntegration
 
 app = Flask(__name__)
 
-app_id = '<your_app_number_here>'
+app_id = 311895
 
 # Read the bot certificate
 with open(
-        os.path.normpath(os.path.expanduser('bot_key.pem')),
+        os.path.normpath(os.path.expanduser('hugovent-bot.2023-03-30.private-key.pem')),
         'r'
 ) as cert_file:
     app_key = cert_file.read()
@@ -23,6 +23,7 @@ def issue_opened_event(repo, payload):
     issue = repo.get_issue(number=payload['issue']['number'])
     author = issue.user.login
 
+    issue.add_to_labels("needs triage")
     
     response = f"Thanks for opening this issue, @{author}! " \
                 f"The repository maintainers will look into it ASAP! :speech_balloon:"
@@ -48,6 +49,7 @@ def bot():
     # Check if the event is a GitHub issue creation event
     if all(k in payload.keys() for k in ['action', 'issue']) and payload['action'] == 'opened':
         issue_opened_event(repo, payload)
+    
 
     return "", 204
 
